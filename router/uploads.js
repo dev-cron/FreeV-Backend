@@ -3,8 +3,7 @@ const router = express.Router();
 const fs = require('fs');
 const mongodb = require('mongodb');
 const multer = require('multer');
-const VideoData = require('../models/models');
-// const User = require('../models/models');
+const {VideoData} = require('../models/models');
 
 
 const storage = multer.diskStorage({
@@ -35,7 +34,7 @@ let upload = multer({storage:storage});
 
 router.post('/multerCheck',upload.single('image'),async(req,res)=>{
     const {filename, path} = req.file;
-    const {title} = req.body;
+    const {title,nsfw} = req.body;
     console.log(filename);   
     console.log(path);   
     console.log(title);
@@ -48,6 +47,7 @@ router.post('/multerCheck',upload.single('image'),async(req,res)=>{
         const Video = new VideoData;
         Video.title =  title;
         Video.img.data = fs.readFileSync(path);
+        Video.nsfw = nsfw; 
         // console.log(Video);
         await Video.save();
         fs.unlink(path,(err)=>{
@@ -55,6 +55,7 @@ router.post('/multerCheck',upload.single('image'),async(req,res)=>{
                 console.log(err);
             }
         })
+        res.sendStatus(200);
     }
     catch(err){
         console.log(err);
