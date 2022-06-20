@@ -11,7 +11,12 @@ const videoSchema = new mongoose.Schema({
     required:true,
   },
   img:{ 
-    data: Buffer,
+    type:String,
+    required:true,
+  },
+  uuid:{
+    type:String,
+    required:true
   }
 })
 

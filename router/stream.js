@@ -4,7 +4,8 @@ const fs = require('fs');
 const mongodb = require('mongodb');
 
 router.get("/mongo-video/:param", function (req, res) {
-    const param = req.params;
+    const obj = req.params;
+    console.log(obj);
 
     mongodb.MongoClient.connect(process.env.DB_URL, function (error, client) {
       if (error) {
@@ -19,13 +20,14 @@ router.get("/mongo-video/:param", function (req, res) {
   
       const db = client.db('videos');
       // GridFS Collection
-      db.collection('fs.files').findOne({}, (err, video) => {
+      db.collection('fs.files').findOne({filename:obj.param}, (err, video) => {
         if (!video) {
           res.status(404).send("No video uploaded!");
           return;
         }
   
         // Create response headers
+        console.log(video);
         const videoSize = video.length;
         const start = Number(range.replace(/\D/g, ""));
         const end = videoSize - 1;
@@ -42,7 +44,7 @@ router.get("/mongo-video/:param", function (req, res) {
         res.writeHead(206, headers);
   
         const bucket = new mongodb.GridFSBucket(db);
-        const downloadStream = bucket.openDownloadStreamByName(`${param}`, {
+        const downloadStream = bucket.openDownloadStreamByName(`${obj.param}`, {
           start
         });
   

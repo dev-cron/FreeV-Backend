@@ -9,11 +9,12 @@ router.get('/',Authenticate,async(req,res)=>{
     console.log("in auth true");
     console.log(req.rootUser.age);
     if(req.rootUser.age>=18){
-      data = await VideoData.find({nsfw:"true"});
+      data = await VideoData.find({});
     }
     else{
       data = await VideoData.find({nsfw:"false"});
     }
+    res.cookie('isUser','1');
     res.send(data);
   }
   else{

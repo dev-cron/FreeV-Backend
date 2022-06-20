@@ -17,49 +17,58 @@ const storage = multer.diskStorage({
 
 let upload = multer({storage:storage});
 
-// router.get('/uploads',(req,res)=>{
-//   mongodb.MongoClient.connect(process.env.DB_URL,(error,client)=>{
-//     if(error){
-//       res.json(error);
-//       return;
-//     }
-//     const db = client.db('videos');
-//     const bucket = new mongodb.GridFSBucket(db);
-//     const videoUploadStream = bucket.openUploadStream('test');
-//     const videoReadStream = fs.createReadStream('testVid.mp4');
-//     videoReadStream.pipe(videoUploadStream);
-//     res.status(200).send("Done...");
-//   });
-// });
+router.post('/upload-video',upload.single('video'),(req,res)=>{
+  const {title} = req.body;
+  console.log(req.file);
+  mongodb.MongoClient.connect(process.env.DB_URL,(error,client)=>{
+    if(error){
+      res.json(error);
+      return;
+    }
+    const db = client.db('videos');
+    const bucket = new mongodb.GridFSBucket(db);
+    const videoUploadStream = bucket.openUploadStream(`${title}`);
+    const videoReadStream = fs.createReadStream(`./uploads/${req.file.filename}`);
+    videoReadStream.pipe(videoUploadStream);
+    res.status(200).send("Done...");
+    fs.unlink(`./uploads/${req.file.filename}`,(err)=>{
+      if(err){
+        console.log(err);
+      }
+    })
+  });
+  }  
+);
 
-router.post('/multerCheck',upload.single('image'),async(req,res)=>{
-    const {filename, path} = req.file;
-    const {title,nsfw} = req.body;
-    console.log(filename);   
-    console.log(path);   
-    console.log(title);
+// ,upload.single('image')
+ // // fs.unlink(path,(err)=>{
+        // //     if(err){
+        // //         console.log(err);
+        // //     }
+        // // })
+
+        
+router.post('/upload-data',async(req,res)=>{
+    const {title,nsfw,image,uuid} = req.body;
     
-    if (!filename || !path){
+    if (!image || !nsfw || !title){
         return res.status(422).json({error:"fill all details"});
     }
 
     try{
         const Video = new VideoData;
         Video.title =  title;
-        Video.img.data = fs.readFileSync(path);
-        Video.nsfw = nsfw; 
-        // console.log(Video);
+        Video.img = image;
+        Video.nsfw = nsfw;
+        Video.uuid = uuid;
         await Video.save();
-        fs.unlink(path,(err)=>{
-            if(err){
-                console.log(err);
-            }
-        })
         res.sendStatus(200);
     }
     catch(err){
         console.log(err);
+        res.sendStatus(400);
     };
-})
+    }  
+)
 
 module.exports = router;

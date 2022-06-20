@@ -5,13 +5,14 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
-dotenv.config();
+dotenv.config(); // env variables
 
-require('./db/conn');
+require('./db/conn'); // database initialization
 
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
-app.use(cors({credentials:true,origin:'http://localhost:3000'}));
+app.use(cors({credentials:true,origin:'http://localhost:3000'})); // cookies
 
 app.use('/',require('./router/home'));
 app.use('/register',require('./router/register'));
