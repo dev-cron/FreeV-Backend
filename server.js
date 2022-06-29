@@ -9,8 +9,8 @@ dotenv.config(); // env variables
 
 require('./db/conn'); // database initialization
 
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.json({limit:'50mb'}));
+app.use(express.urlencoded({extended: true , limit:'50mb'}));
 app.use(cookieParser());
 app.use(cors({credentials:true,origin:'http://localhost:3000'})); // cookies
 
@@ -19,6 +19,7 @@ app.use('/register',require('./router/register'));
 app.use('/',require('./router/uploads'));
 app.use('/',require('./router/stream'));
 app.use('/',require('./router/signin'));
+app.use('/',require('./router/search'));
 
 const PORT = process.env.PORT || 5000;
 

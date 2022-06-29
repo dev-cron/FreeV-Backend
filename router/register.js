@@ -14,7 +14,7 @@ router.post('/register',async (req,res) => {
 
     try{
         if( await User.findOne({email:email})){
-            return res.status(422).json({error:"email already exits"});
+            return res.status(409).json({error:"email already exits"});
         }
 
         const user = new User({name, email, password , age});
@@ -25,25 +25,6 @@ router.post('/register',async (req,res) => {
     }
     catch(err){
         console.log(err);
-    }
-})
-
-router.post('/addvideo',async (req,res)=>{
-    const {title,email} = req.body;
-
-    try{
-        if(await User.findOne({email:email})){
-            // return res.status(422).json({error:"email already exits"});
-            User.findOneAndUpdate({email:email},{$push:{
-                videos:{
-                    title:`${title}`
-                }
-            }}).exec(); 
-            res.status(201).json({message:"video updated"});
-        }
-    }
-    catch(err){
-        res.send(err);
     }
 })
 

@@ -14,6 +14,7 @@ module.exports = async (req,res,next) => {
         if(!rootUser){
             throw new Error('User not found');
         }
+        req.name = rootUser.name;
         
         req.auth = "true";
         
@@ -33,8 +34,15 @@ module.exports = async (req,res,next) => {
     
 }
     catch(err){
+        if(err.name === "TokenExpiredError")
+        {
+            req.auth = "false";
+            next();
+        }
+        else{
         res.status(404).send("error occured");
         console.log(err);
+        }
     }
 }
 

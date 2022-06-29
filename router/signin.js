@@ -28,7 +28,7 @@ router.post('/signin',async (req, res)=>{
                 });
             }
             if(password !== userLogin.password){
-                return res.status(400).json({error:"Incorrect email or password"});
+                return res.status(401).json({error:"Incorrect email or password"});
             }
             else{
                 res.json({message:"login successfull"});

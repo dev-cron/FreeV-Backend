@@ -3,9 +3,8 @@ const router = express.Router();
 const fs = require('fs');
 const mongodb = require('mongodb');
 
-router.get("/mongo-video/:param", function (req, res) {
+router.get("/mongo-video/:param", async (req, res) => {
     const obj = req.params;
-    console.log(obj);
 
     mongodb.MongoClient.connect(process.env.DB_URL, function (error, client) {
       if (error) {
@@ -45,7 +44,7 @@ router.get("/mongo-video/:param", function (req, res) {
   
         const bucket = new mongodb.GridFSBucket(db);
         const downloadStream = bucket.openDownloadStreamByName(`${obj.param}`, {
-          start
+          start:start
         });
   
         // Finally pipe video to response
