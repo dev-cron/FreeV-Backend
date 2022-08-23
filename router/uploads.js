@@ -4,7 +4,7 @@ const fs = require("fs");
 const mongodb = require("mongodb");
 const multer = require("multer");
 const authentication = require("../middleware/authentication");
-const { VideoData, User } = require("../models/models");
+const { VideoData, User, userSpecific } = require("../models/models");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -48,6 +48,7 @@ router.post("/upload-video",authentication, upload.single("video"), (req, res) =
 });
 
 router.post("/upload-data", authentication, async (req, res) => {
+  
   const { title, nsfw, image, uuid } = req.body;
 
   if (!image || !nsfw || !title) {
@@ -57,19 +58,30 @@ router.post("/upload-data", authentication, async (req, res) => {
   if (req.auth === "true") {
     try {
       const Video = new VideoData();
+      
       Video.title = title;
       Video.img = image;
       Video.nsfw = nsfw;
       Video.uuid = uuid;
 
-      await User.findOneAndUpdate(
-        { email: req.rootUser.email },
+      if(await userSpecific.findOne({email:req.rootUser.email})){
+        await userSpecific.findOneAndUpdate({email:req.rootUser.email},
         {
           $push: {
-            videos: { Video },
-          },
-        }
-      ).exec();
+            videos:{
+              "title": title,
+              "img":image,
+              "uuid":uuid
+            }
+          }
+        }).exec()
+      }
+      else{
+        const uservideo = new userSpecific();
+        uservideo.email = req.rootUser.email;
+        uservideo.videos = [{"title": title,"img":image,"uuid":uuid}];
+        await uservideo.save();
+      } 
 
       await Video.save();
       res.sendStatus(200);

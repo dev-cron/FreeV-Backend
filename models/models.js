@@ -37,10 +37,21 @@ const userSchema = new mongoose.Schema({
     type:Number,
     required: true,
   },
-  videos:[videoSchema],
   token:{
     type:String,
   }
+})
+
+const userVideo = new mongoose.Schema({
+  email: {
+    type: String,
+    required:true,
+  },
+  videos:[{
+    title : String,
+    img: String,
+    uuid: String
+  }]
 })
 
 userSchema.methods.generateAuthToken = async function(){
@@ -62,5 +73,6 @@ userSchema.methods.generateAuthToken = async function(){
 
 const VideoData = mongoose.model('VideoData',videoSchema);
 const User = mongoose.model('USER',userSchema);
+const userSpecific = mongoose.model('uservideo',userVideo);
 
-module.exports = { User , VideoData};
+module.exports = { User , VideoData , userSpecific};

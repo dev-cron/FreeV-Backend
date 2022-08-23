@@ -3,7 +3,7 @@ const {User} = require('../models/models');
 
 module.exports = async (req,res,next) => {
     try{
-        if(req.cookies.jwt!== undefined){
+        if(req.cookies.jwt!== undefined && req.cookies.jwt!=="loggedOut"){
         
         const token = req.cookies.jwt;
         
@@ -42,6 +42,7 @@ module.exports = async (req,res,next) => {
         else{
         res.status(404).send("error occured");
         console.log(err);
+        next();
         }
     }
 }

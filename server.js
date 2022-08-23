@@ -20,6 +20,7 @@ app.use('/',require('./router/uploads'));
 app.use('/',require('./router/stream'));
 app.use('/',require('./router/signin'));
 app.use('/',require('./router/search'));
+app.use('/',require('./router/logout'));
 
 const PORT = process.env.PORT || 5000;
 
