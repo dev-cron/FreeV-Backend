@@ -21,6 +21,7 @@ app.use('/',require('./router/stream'));
 app.use('/',require('./router/signin'));
 app.use('/',require('./router/search'));
 app.use('/',require('./router/logout'));
+app.use('/',require('./router/yourvideos'));
 
 const PORT = process.env.PORT || 5000;
 

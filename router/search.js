@@ -2,13 +2,15 @@ const express = require("express");
 const { VideoData } = require("../models/models");
 const router = express.Router();
 
-router.get("/search",async (req, res) => {
-  const {query} = req.body;
-  console.log(query);
+router.get("/search/:query",async (req, res) => {
 
-//   const data = await VideoData.find({title:{$regex:query,$options:'i'}});
-//   console.log(data);
-//   res.send(data);
+  console.log("search executed!");
+
+  const obj = req.params;
+  const search = obj.query;
+
+  const data = await VideoData.find({title:{$regex:search,$options:'i'}});
+  res.status(200).send(data);
 });
 
 module.exports = router;
