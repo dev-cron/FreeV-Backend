@@ -12,7 +12,7 @@ require('./db/conn'); // database initialization
 app.use(express.json({limit:'50mb'}));
 app.use(express.urlencoded({extended: true , limit:'50mb'}));
 app.use(cookieParser());
-app.use(cors({credentials:true,origin:'*'})); // cookies
+app.use(cors({credentials:true,origin:true})); // cookies
 
 app.use('/',require('./router/home'));
 app.use('/register',require('./router/register'));
